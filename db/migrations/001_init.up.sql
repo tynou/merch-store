@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS coin_transfers (
     FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT check_amount_positive CHECK (amount > 0),
-    CONSTRAINT check_self_transfer CHECK (from_id <> to_id),
+    CONSTRAINT check_self_transfer CHECK (from_id <> to_id)
 );
 
 INSERT INTO merch (name, price) VALUES
