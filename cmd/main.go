@@ -13,6 +13,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/http/handlers"
+	"github.com/tynou/avito-assignment/internal/repo/users"
+	"github.com/tynou/avito-assignment/internal/service/auth"
 )
 
 func main() {
@@ -47,7 +49,11 @@ func main() {
 		port = "8080"
 	}
 
-	apiHandler := handlers.NewApiHandler()
+	userRepo := users.NewUserRepo(pool)
+
+	authService := auth.NewAuthService(userRepo)
+
+	apiHandler := handlers.NewApiHandler(authService)
 
 	router := http.NewServeMux()
 
