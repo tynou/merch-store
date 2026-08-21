@@ -15,7 +15,7 @@ FROM alpine:latest
 WORKDIR /avito-shop
 
 COPY --from=builder /build/app ./app
-COPY --from=builder /build/db ./db
+COPY --from=builder /build/db/migrations ./db/migrations
 
 EXPOSE 8080
 
