@@ -16,8 +16,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/tynou/avito-assignment/internal/http/handlers"
 	"github.com/tynou/avito-assignment/internal/http/middleware"
+	"github.com/tynou/avito-assignment/internal/repo/merch"
+	"github.com/tynou/avito-assignment/internal/repo/purchases"
 	"github.com/tynou/avito-assignment/internal/repo/users"
 	"github.com/tynou/avito-assignment/internal/service/auth"
+	"github.com/tynou/avito-assignment/internal/service/purchase"
 )
 
 func main() {
@@ -60,10 +63,13 @@ func main() {
 	validate := validator.New()
 
 	userRepo := users.NewUserRepo(pool)
+	merchRepo := merch.NewMerchRepo(pool)
+	purchaseRepo := purchases.NewPurchaseRepo(pool)
 
 	authService := auth.NewAuthService(userRepo)
+	purchaseService := purchase.NewPurchaseService(merchRepo, purchaseRepo)
 
-	apiHandler := handlers.NewApiHandler(validate, authService)
+	apiHandler := handlers.NewApiHandler(validate, authService, purchaseService)
 
 	router := http.NewServeMux()
 

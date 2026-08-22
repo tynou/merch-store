@@ -25,6 +25,11 @@ func RespondWithJson(w http.ResponseWriter, status int, payload interface{}) {
 	json.NewEncoder(w).Encode(payload)
 }
 
+func RespondWithText(w http.ResponseWriter, status int, text string) {
+	w.WriteHeader(status)
+	w.Write([]byte(text))
+}
+
 func RespondWithError(w http.ResponseWriter, status int, message string) {
 	RespondWithJson(w, status, ErrorResponse{
 		Errors: message,

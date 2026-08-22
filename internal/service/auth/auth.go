@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/tynou/avito-assignment/internal/db"
 	"github.com/tynou/avito-assignment/internal/http/common"
-	"github.com/tynou/avito-assignment/internal/repo/users"
+	"github.com/tynou/avito-assignment/internal/repo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,21 +22,21 @@ type IUserRepo interface {
 }
 
 type AuthService struct {
-	repo IUserRepo
+	userRepo IUserRepo
 }
 
-func NewAuthService(repo IUserRepo) *AuthService {
+func NewAuthService(userRepo IUserRepo) *AuthService {
 	return &AuthService{
-		repo: repo,
+		userRepo: userRepo,
 	}
 }
 
 func (s *AuthService) Authenticate(ctx context.Context, username, password string) (string, error) {
 	var userId int32
 
-	user, err := s.repo.GetUserByUsername(ctx, username)
+	user, err := s.userRepo.GetUserByUsername(ctx, username)
 	if err != nil {
-		if !errors.Is(err, users.ErrNotFound) {
+		if !errors.Is(err, repo.ErrNotFound) {
 			return "", err
 		}
 
@@ -45,7 +45,7 @@ func (s *AuthService) Authenticate(ctx context.Context, username, password strin
 			return "", err
 		}
 
-		userId, err = s.repo.CreateUser(ctx, username, string(hash))
+		userId, err = s.userRepo.CreateUser(ctx, username, string(hash))
 		if err != nil {
 			return "", err
 		}

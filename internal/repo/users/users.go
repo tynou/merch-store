@@ -7,10 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/db"
-)
-
-var (
-	ErrNotFound = errors.New("entity not found")
+	"github.com/tynou/avito-assignment/internal/repo"
 )
 
 type UserRepo struct {
@@ -27,7 +24,7 @@ func (r *UserRepo) GetUserByUsername(ctx context.Context, username string) (db.U
 	user, err := r.queries.GetUserByUsername(ctx, username)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return db.User{}, ErrNotFound
+			return db.User{}, repo.ErrNotFound
 		}
 
 		return db.User{}, err
