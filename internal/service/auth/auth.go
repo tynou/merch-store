@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/tynou/avito-assignment/internal/apperr"
+	"github.com/tynou/avito-assignment/internal/config"
 	"github.com/tynou/avito-assignment/internal/db"
-	"github.com/tynou/avito-assignment/internal/http/common"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,11 +18,13 @@ type IUserRepo interface {
 }
 
 type AuthService struct {
+	cfg      *config.Config
 	userRepo IUserRepo
 }
 
-func NewAuthService(userRepo IUserRepo) *AuthService {
+func NewAuthService(cfg *config.Config, userRepo IUserRepo) *AuthService {
 	return &AuthService{
+		cfg:      cfg,
 		userRepo: userRepo,
 	}
 }
@@ -59,7 +61,7 @@ func (s *AuthService) Authenticate(ctx context.Context, username, password strin
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	})
 
-	signedToken, err := token.SignedString(common.JWTSecret)
+	signedToken, err := token.SignedString(s.cfg.JWTKey)
 	if err != nil {
 		return "", err
 	}

@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/tynou/avito-assignment/internal/config"
 	"github.com/tynou/avito-assignment/internal/http/common"
 )
 
-func AuthMiddleware(next http.Handler) http.Handler {
+func AuthMiddleware(cfg *config.Config, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
@@ -26,7 +27,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		jwtToken := parts[1]
 
 		token, err := jwt.Parse(jwtToken, func(t *jwt.Token) (any, error) {
-			return common.JWTSecret, nil
+			return cfg.JWTKey, nil
 		})
 		if err != nil || !token.Valid {
 			common.RespondWithError(w, http.StatusUnauthorized, "Некорректный токен.")

@@ -6,8 +6,6 @@ import (
 	"net/http"
 )
 
-var JWTSecret = []byte("my_super_secret_key")
-
 var UserIdKey = "user_id"
 
 type ErrorResponse struct {
