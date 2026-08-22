@@ -2,9 +2,15 @@ package users
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/db"
+)
+
+var (
+	ErrNotFound = errors.New("entity not found")
 )
 
 type UserRepo struct {
@@ -18,7 +24,15 @@ func NewUserRepo(pool *pgxpool.Pool) *UserRepo {
 }
 
 func (r *UserRepo) GetUserByUsername(ctx context.Context, username string) (db.User, error) {
-	return r.queries.GetUserByUsername(ctx, username)
+	user, err := r.queries.GetUserByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return db.User{}, ErrNotFound
+		}
+
+		return db.User{}, err
+	}
+	return user, nil
 }
 
 func (r *UserRepo) CreateUser(ctx context.Context, username, passwordHash string) (int32, error) {
