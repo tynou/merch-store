@@ -13,6 +13,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/tynou/avito-assignment/internal/http/handlers"
 	"github.com/tynou/avito-assignment/internal/http/middleware"
 	"github.com/tynou/avito-assignment/internal/repo/users"
@@ -20,6 +21,11 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("error loading .env file: %v", err)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
