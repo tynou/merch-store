@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -12,7 +13,7 @@ type ErrorResponse struct {
 }
 
 type IAuthService interface {
-	Authenticate(username, password string) (string, error)
+	Authenticate(ctx context.Context, username, password string) (string, error)
 }
 
 type ApiHandler struct {

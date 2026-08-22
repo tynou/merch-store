@@ -29,10 +29,10 @@ func (h *ApiHandler) Auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.auth.Authenticate(req.Username, req.Password)
+	token, err := h.auth.Authenticate(r.Context(), req.Username, req.Password)
 	if err != nil {
 		if errors.Is(err, auth.ErrUnauthorized) {
-			respondWithError(w, http.StatusUnauthorized, err.Error())
+			respondWithError(w, http.StatusUnauthorized, "Вы не авторизованы.")
 			return
 		}
 
