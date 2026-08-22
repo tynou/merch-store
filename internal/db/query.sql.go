@@ -9,6 +9,21 @@ import (
 	"context"
 )
 
+const createPurchase = `-- name: CreatePurchase :exec
+INSERT INTO purchases (user_id, merch_id)
+VALUES ($1, $2)
+`
+
+type CreatePurchaseParams struct {
+	UserID  int32
+	MerchID int32
+}
+
+func (q *Queries) CreatePurchase(ctx context.Context, arg CreatePurchaseParams) error {
+	_, err := q.db.Exec(ctx, createPurchase, arg.UserID, arg.MerchID)
+	return err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (username, password_hash)
 VALUES ($1, $2)
@@ -25,6 +40,20 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, 
 	var id int32
 	err := row.Scan(&id)
 	return id, err
+}
+
+const getMerchByName = `-- name: GetMerchByName :one
+SELECT id, name, price
+FROM merch
+WHERE name = $1
+LIMIT 1
+`
+
+func (q *Queries) GetMerchByName(ctx context.Context, name string) (Merch, error) {
+	row := q.db.QueryRow(ctx, getMerchByName, name)
+	var i Merch
+	err := row.Scan(&i.ID, &i.Name, &i.Price)
+	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
@@ -44,4 +73,41 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.Balance,
 	)
 	return i, err
+}
+
+const getUserForUpdate = `-- name: GetUserForUpdate :one
+SELECT id, username, balance
+FROM users
+WHERE id = $1
+LIMIT 1
+FOR UPDATE
+`
+
+type GetUserForUpdateRow struct {
+	ID       int32
+	Username string
+	Balance  int32
+}
+
+func (q *Queries) GetUserForUpdate(ctx context.Context, id int32) (GetUserForUpdateRow, error) {
+	row := q.db.QueryRow(ctx, getUserForUpdate, id)
+	var i GetUserForUpdateRow
+	err := row.Scan(&i.ID, &i.Username, &i.Balance)
+	return i, err
+}
+
+const updateUserBalance = `-- name: UpdateUserBalance :exec
+UPDATE users
+SET balance = $1
+WHERE id = $2
+`
+
+type UpdateUserBalanceParams struct {
+	Balance int32
+	ID      int32
+}
+
+func (q *Queries) UpdateUserBalance(ctx context.Context, arg UpdateUserBalanceParams) error {
+	_, err := q.db.Exec(ctx, updateUserBalance, arg.Balance, arg.ID)
+	return err
 }
