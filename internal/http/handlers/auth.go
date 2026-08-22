@@ -24,6 +24,11 @@ func (h *ApiHandler) Auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := h.validate.Struct(&req); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Поля username и password обязательны.")
+		return
+	}
+
 	token, err := h.auth.Authenticate(req.Username, req.Password)
 	if err != nil {
 		if errors.Is(err, auth.ErrUnauthorized) {

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -49,11 +50,13 @@ func main() {
 		port = "8080"
 	}
 
+	validate := validator.New()
+
 	userRepo := users.NewUserRepo(pool)
 
 	authService := auth.NewAuthService(userRepo)
 
-	apiHandler := handlers.NewApiHandler(authService)
+	apiHandler := handlers.NewApiHandler(validate, authService)
 
 	router := http.NewServeMux()
 

@@ -3,6 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type ErrorResponse struct {
@@ -14,12 +16,14 @@ type IAuthService interface {
 }
 
 type ApiHandler struct {
-	auth IAuthService
+	validate *validator.Validate
+	auth     IAuthService
 }
 
-func NewApiHandler(auth IAuthService) *ApiHandler {
+func NewApiHandler(validate *validator.Validate, auth IAuthService) *ApiHandler {
 	return &ApiHandler{
-		auth: auth,
+		validate: validate,
+		auth:     auth,
 	}
 }
 
