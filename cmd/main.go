@@ -14,6 +14,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/http/handlers"
+	"github.com/tynou/avito-assignment/internal/http/middleware"
 	"github.com/tynou/avito-assignment/internal/repo/users"
 	"github.com/tynou/avito-assignment/internal/service/auth"
 )
@@ -60,9 +61,10 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /api/info", apiHandler.Info)
-	router.HandleFunc("POST /api/sendCoin", apiHandler.SendCoin)
-	router.HandleFunc("GET /api/buy/{item}", apiHandler.Buy)
+	router.Handle("GET /api/info", middleware.AuthMiddleware(http.HandlerFunc(apiHandler.Info)))
+	router.Handle("POST /api/sendCoin", middleware.AuthMiddleware(http.HandlerFunc(apiHandler.SendCoin)))
+	router.Handle("GET /api/buy/{item}", middleware.AuthMiddleware(http.HandlerFunc(apiHandler.Buy)))
+
 	router.HandleFunc("POST /api/auth", apiHandler.Auth)
 
 	log.Printf("server running on port: %s\n", port)
