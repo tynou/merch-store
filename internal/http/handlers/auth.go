@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/tynou/avito-assignment/internal/http/common"
 	"github.com/tynou/avito-assignment/internal/service/auth"
 )
 
@@ -20,27 +21,27 @@ type AuthResponse struct {
 func (h *ApiHandler) Auth(w http.ResponseWriter, r *http.Request) {
 	var req AuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Неверное тело запроса.")
+		common.RespondWithError(w, http.StatusBadRequest, "Некорректное тело запроса.")
 		return
 	}
 
 	if err := h.validate.Struct(&req); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Поля username и password обязательны.")
+		common.RespondWithError(w, http.StatusBadRequest, "Поля username и password обязательны.")
 		return
 	}
 
 	token, err := h.auth.Authenticate(r.Context(), req.Username, req.Password)
 	if err != nil {
 		if errors.Is(err, auth.ErrUnauthorized) {
-			respondWithError(w, http.StatusUnauthorized, "Вы не авторизованы.")
+			common.RespondWithError(w, http.StatusUnauthorized, "Вы не авторизованы.")
 			return
 		}
 
-		respondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+		common.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
 		return
 	}
 
-	respondWithJson(w, http.StatusOK, AuthResponse{
+	common.RespondWithJson(w, http.StatusOK, AuthResponse{
 		Token: token,
 	})
 }

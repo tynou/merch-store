@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/http/common"
 	"github.com/tynou/avito-assignment/internal/repo/users"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,9 +15,6 @@ import (
 var (
 	ErrUnauthorized = errors.New("user is not authorized")
 )
-
-// TODO (TASK-001): Заменить хардкод на взятие ключа из конфига
-var JWTSecret = []byte("my_super_secret_key")
 
 type IUserRepo interface {
 	GetUserByUsername(ctx context.Context, username string) (db.User, error)
@@ -65,7 +63,7 @@ func (s *AuthService) Authenticate(ctx context.Context, username, password strin
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	})
 
-	signedToken, err := token.SignedString(JWTSecret)
+	signedToken, err := token.SignedString(common.JWTSecret)
 	if err != nil {
 		return "", err
 	}
