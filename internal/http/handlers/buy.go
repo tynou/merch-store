@@ -4,9 +4,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/http/common"
-	"github.com/tynou/avito-assignment/internal/repo"
-	"github.com/tynou/avito-assignment/internal/service/purchase"
 )
 
 func (h *ApiHandler) Buy(w http.ResponseWriter, r *http.Request) {
@@ -16,12 +15,12 @@ func (h *ApiHandler) Buy(w http.ResponseWriter, r *http.Request) {
 
 	err := h.purchase.Buy(r.Context(), userId, item)
 	if err != nil {
-		if errors.Is(err, repo.ErrNotFound) {
+		if errors.Is(err, apperr.ErrNotFound) {
 			common.RespondWithError(w, http.StatusBadRequest, "Мерч не найден.")
 			return
 		}
 
-		if errors.Is(err, purchase.ErrInsufficientFunds) {
+		if errors.Is(err, apperr.ErrInsufficientFunds) {
 			common.RespondWithError(w, http.StatusBadRequest, "Недостаточно средств для покупки.")
 			return
 		}

@@ -2,13 +2,8 @@ package purchase
 
 import (
 	"context"
-	"errors"
 
 	"github.com/tynou/avito-assignment/internal/db"
-)
-
-var (
-	ErrInsufficientFunds = errors.New("insufficient funds")
 )
 
 type IMerchRepo interface {

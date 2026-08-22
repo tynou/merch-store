@@ -6,14 +6,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/db"
 	"github.com/tynou/avito-assignment/internal/http/common"
-	"github.com/tynou/avito-assignment/internal/repo"
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	ErrUnauthorized = errors.New("user is not authorized")
 )
 
 type IUserRepo interface {
@@ -36,7 +32,7 @@ func (s *AuthService) Authenticate(ctx context.Context, username, password strin
 
 	user, err := s.userRepo.GetUserByUsername(ctx, username)
 	if err != nil {
-		if !errors.Is(err, repo.ErrNotFound) {
+		if !errors.Is(err, apperr.ErrNotFound) {
 			return "", err
 		}
 
@@ -52,7 +48,7 @@ func (s *AuthService) Authenticate(ctx context.Context, username, password strin
 	} else {
 		err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 		if err != nil {
-			return "", ErrUnauthorized
+			return "", apperr.ErrUnauthorized
 		}
 
 		userId = user.ID

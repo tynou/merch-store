@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/db"
-	"github.com/tynou/avito-assignment/internal/service/purchase"
 )
 
 type PurchaseRepo struct {
@@ -36,7 +36,7 @@ func (r *PurchaseRepo) CreatePurchase(ctx context.Context, userId int32, merch d
 	}
 
 	if user.Balance < merch.Price {
-		return purchase.ErrInsufficientFunds
+		return apperr.ErrInsufficientFunds
 	}
 
 	newBalance := user.Balance - merch.Price

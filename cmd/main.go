@@ -55,11 +55,6 @@ func main() {
 	}
 	defer pool.Close()
 
-	port := os.Getenv("SERVER_PORT")
-	if port == "" {
-		port = "8080"
-	}
-
 	validate := validator.New()
 
 	userRepo := users.NewUserRepo(pool)
@@ -78,6 +73,11 @@ func main() {
 	router.Handle("GET /api/buy/{item}", middleware.AuthMiddleware(http.HandlerFunc(apiHandler.Buy)))
 
 	router.HandleFunc("POST /api/auth", apiHandler.Auth)
+
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	log.Printf("server running on port: %s\n", port)
 	if err := http.ListenAndServe(":"+port, router); err != nil {

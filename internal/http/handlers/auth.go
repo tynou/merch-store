@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/http/common"
-	"github.com/tynou/avito-assignment/internal/service/auth"
 )
 
 type AuthRequest struct {
@@ -32,7 +32,7 @@ func (h *ApiHandler) Auth(w http.ResponseWriter, r *http.Request) {
 
 	token, err := h.auth.Authenticate(r.Context(), req.Username, req.Password)
 	if err != nil {
-		if errors.Is(err, auth.ErrUnauthorized) {
+		if errors.Is(err, apperr.ErrUnauthorized) {
 			common.RespondWithError(w, http.StatusUnauthorized, "Вы не авторизованы.")
 			return
 		}
