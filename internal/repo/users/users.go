@@ -32,6 +32,18 @@ func (r *UserRepo) GetUserByUsername(ctx context.Context, username string) (db.U
 	return user, nil
 }
 
+func (r *UserRepo) GetUserBalance(ctx context.Context, userId int32) (int32, error) {
+	balance, err := r.queries.GetUserBalance(ctx, userId)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return 0, apperr.ErrNotFound
+		}
+
+		return 0, err
+	}
+	return balance, nil
+}
+
 func (r *UserRepo) CreateUser(ctx context.Context, username, passwordHash string) (int32, error) {
 	return r.queries.CreateUser(ctx, db.CreateUserParams{
 		Username:     username,

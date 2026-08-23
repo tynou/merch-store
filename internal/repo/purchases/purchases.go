@@ -39,9 +39,8 @@ func (r *PurchaseRepo) CreatePurchase(ctx context.Context, userId int32, merch d
 		return apperr.ErrInsufficientFunds
 	}
 
-	newBalance := user.Balance - merch.Price
 	err = qtx.UpdateUserBalance(ctx, db.UpdateUserBalanceParams{
-		Balance: newBalance,
+		Balance: user.Balance - merch.Price,
 		ID:      userId,
 	})
 	if err != nil {
@@ -57,4 +56,12 @@ func (r *PurchaseRepo) CreatePurchase(ctx context.Context, userId int32, merch d
 	}
 
 	return tx.Commit(ctx)
+}
+
+func (r *PurchaseRepo) GetUserInventory(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error) {
+	inventory, err := r.queries.GetUserInventory(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	return inventory, nil
 }

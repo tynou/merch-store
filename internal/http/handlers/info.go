@@ -1,33 +1,45 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
 
-type ItemDto struct {
+	"github.com/tynou/avito-assignment/internal/http/common"
+)
+
+type InventoryItem struct {
 	Type     string `json:"type"`
-	Quantity int    `json:"quantity"`
+	Quantity int32  `json:"quantity"`
 }
 
-type ReceivedCoinsDto struct {
+type ReceivedTransfer struct {
 	FromUser string `json:"fromUser"`
-	Amount   int    `json:"amount"`
+	Amount   int32  `json:"amount"`
 }
 
-type SentCoinsDto struct {
+type SentTransfer struct {
 	ToUser string `json:"toUser"`
-	Amount int    `json:"amount"`
+	Amount int32  `json:"amount"`
 }
 
-type CoinHistoryDto struct {
-	Received []ReceivedCoinsDto `json:"received"`
-	Sent     []SentCoinsDto     `json:"sent"`
+type CoinHistory struct {
+	Received []ReceivedTransfer `json:"received"`
+	Sent     []SentTransfer     `json:"sent"`
 }
 
 type InfoResponse struct {
-	Coins       int            `json:"coins"`
-	Inventory   []ItemDto      `json:"inventory"`
-	CoinHistory CoinHistoryDto `json:"coinHistory"`
+	Coins       int32           `json:"coins"`
+	Inventory   []InventoryItem `json:"inventory"`
+	CoinHistory CoinHistory     `json:"coinHistory"`
 }
 
 func (h *ApiHandler) Info(w http.ResponseWriter, r *http.Request) {
+	userId, _ := common.GetUserIdFromContext(r.Context())
 
+	response, err := h.info.GetInfo(r.Context(), userId)
+	if err != nil {
+		common.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+		return
+	}
+
+	common.RespondWithJson(w, http.StatusOK, response)
 }

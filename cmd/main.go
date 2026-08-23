@@ -17,9 +17,12 @@ import (
 	"github.com/tynou/avito-assignment/internal/http/middleware"
 	"github.com/tynou/avito-assignment/internal/repo/merch"
 	"github.com/tynou/avito-assignment/internal/repo/purchases"
+	"github.com/tynou/avito-assignment/internal/repo/transfers"
 	"github.com/tynou/avito-assignment/internal/repo/users"
 	"github.com/tynou/avito-assignment/internal/service/auth"
+	"github.com/tynou/avito-assignment/internal/service/info"
 	"github.com/tynou/avito-assignment/internal/service/purchase"
+	"github.com/tynou/avito-assignment/internal/service/transfer"
 )
 
 func main() {
@@ -59,11 +62,14 @@ func main() {
 	userRepo := users.NewUserRepo(pool)
 	merchRepo := merch.NewMerchRepo(pool)
 	purchaseRepo := purchases.NewPurchaseRepo(pool)
+	transferRepo := transfers.NewTransferRepo(pool)
 
 	authService := auth.NewAuthService(cfg, userRepo)
 	purchaseService := purchase.NewPurchaseService(merchRepo, purchaseRepo)
+	infoService := info.NewInfoService(userRepo, purchaseRepo, transferRepo)
+	transferService := transfer.NewTransferService(userRepo, transferRepo)
 
-	apiHandler := handlers.NewApiHandler(validate, authService, purchaseService)
+	apiHandler := handlers.NewApiHandler(validate, authService, purchaseService, infoService, transferService)
 
 	router := http.NewServeMux()
 
