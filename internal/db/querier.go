@@ -9,6 +9,7 @@ import (
 )
 
 type Querier interface {
+	CleanTestData(ctx context.Context) error
 	CreatePurchase(ctx context.Context, arg CreatePurchaseParams) error
 	CreateTransfer(ctx context.Context, arg CreateTransferParams) error
 	CreateUser(ctx context.Context, arg CreateUserParams) (int32, error)

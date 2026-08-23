@@ -64,3 +64,6 @@ JOIN users AS u ON t.to_id = u.id
 WHERE t.from_id = $1
 GROUP BY u.username
 ORDER BY u.username;
+
+-- name: CleanTestData :exec
+TRUNCATE TABLE users, purchases, coin_transfers RESTART IDENTITY CASCADE;

@@ -9,6 +9,15 @@ import (
 	"context"
 )
 
+const cleanTestData = `-- name: CleanTestData :exec
+TRUNCATE TABLE users, purchases, coin_transfers RESTART IDENTITY CASCADE
+`
+
+func (q *Queries) CleanTestData(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, cleanTestData)
+	return err
+}
+
 const createPurchase = `-- name: CreatePurchase :exec
 INSERT INTO purchases (user_id, merch_id)
 VALUES ($1, $2)
