@@ -24,6 +24,22 @@ func (q *Queries) CreatePurchase(ctx context.Context, arg CreatePurchaseParams) 
 	return err
 }
 
+const createTransfer = `-- name: CreateTransfer :exec
+INSERT INTO coin_transfers (from_id, to_id, amount)
+VALUES ($1, $2, $3)
+`
+
+type CreateTransferParams struct {
+	FromID int32
+	ToID   int32
+	Amount int32
+}
+
+func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) error {
+	_, err := q.db.Exec(ctx, createTransfer, arg.FromID, arg.ToID, arg.Amount)
+	return err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (username, password_hash)
 VALUES ($1, $2)
@@ -54,6 +70,88 @@ func (q *Queries) GetMerchByName(ctx context.Context, name string) (Merch, error
 	var i Merch
 	err := row.Scan(&i.ID, &i.Name, &i.Price)
 	return i, err
+}
+
+const getReceivedTransfers = `-- name: GetReceivedTransfers :many
+SELECT u.username AS from_user, SUM(t.amount)::int AS amount
+FROM coin_transfers AS t
+JOIN users AS u ON t.from_id = u.id
+WHERE t.to_id = $1
+GROUP BY u.username
+ORDER BY u.username
+`
+
+type GetReceivedTransfersRow struct {
+	FromUser string
+	Amount   int32
+}
+
+func (q *Queries) GetReceivedTransfers(ctx context.Context, toID int32) ([]GetReceivedTransfersRow, error) {
+	rows, err := q.db.Query(ctx, getReceivedTransfers, toID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetReceivedTransfersRow
+	for rows.Next() {
+		var i GetReceivedTransfersRow
+		if err := rows.Scan(&i.FromUser, &i.Amount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getSentTransfers = `-- name: GetSentTransfers :many
+SELECT u.username AS to_user, SUM(t.amount)::int AS amount
+FROM coin_transfers AS t
+JOIN users AS u ON t.to_id = u.id
+WHERE t.from_id = $1
+GROUP BY u.username
+ORDER BY u.username
+`
+
+type GetSentTransfersRow struct {
+	ToUser string
+	Amount int32
+}
+
+func (q *Queries) GetSentTransfers(ctx context.Context, fromID int32) ([]GetSentTransfersRow, error) {
+	rows, err := q.db.Query(ctx, getSentTransfers, fromID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetSentTransfersRow
+	for rows.Next() {
+		var i GetSentTransfersRow
+		if err := rows.Scan(&i.ToUser, &i.Amount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserBalance = `-- name: GetUserBalance :one
+SELECT balance
+FROM users
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUserBalance(ctx context.Context, id int32) (int32, error) {
+	row := q.db.QueryRow(ctx, getUserBalance, id)
+	var balance int32
+	err := row.Scan(&balance)
+	return balance, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
@@ -94,6 +192,40 @@ func (q *Queries) GetUserForUpdate(ctx context.Context, id int32) (GetUserForUpd
 	var i GetUserForUpdateRow
 	err := row.Scan(&i.ID, &i.Username, &i.Balance)
 	return i, err
+}
+
+const getUserInventory = `-- name: GetUserInventory :many
+SELECT m.name AS type, COUNT(*)::int AS quantity
+FROM purchases AS p
+JOIN merch AS m ON p.merch_id = m.id
+WHERE p.user_id = $1
+GROUP BY m.name
+ORDER BY m.name
+`
+
+type GetUserInventoryRow struct {
+	Type     string
+	Quantity int32
+}
+
+func (q *Queries) GetUserInventory(ctx context.Context, userID int32) ([]GetUserInventoryRow, error) {
+	rows, err := q.db.Query(ctx, getUserInventory, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserInventoryRow
+	for rows.Next() {
+		var i GetUserInventoryRow
+		if err := rows.Scan(&i.Type, &i.Quantity); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateUserBalance = `-- name: UpdateUserBalance :exec
