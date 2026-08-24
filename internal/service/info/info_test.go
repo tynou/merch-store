@@ -11,7 +11,7 @@ import (
 	"github.com/tynou/avito-assignment/internal/service/info/mocks"
 )
 
-func TestGetUserInfo_Success(t *testing.T) {
+func Test_GetUserInfo_Success(t *testing.T) {
 	ctx := context.Background()
 	userID := int32(1)
 
@@ -51,7 +51,7 @@ func TestGetUserInfo_Success(t *testing.T) {
 	assert.Len(t, resp.CoinHistory.Sent, 2)
 }
 
-func TestGetUserInfo_GetUserBalance_Failure(t *testing.T) {
+func Test_GetUserInfo_GetUserBalance_Failure(t *testing.T) {
 	ctx := context.Background()
 	userID := int32(1)
 
@@ -67,7 +67,7 @@ func TestGetUserInfo_GetUserBalance_Failure(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestGetUserInfo_GetUserInventory_Failure(t *testing.T) {
+func Test_GetUserInfo_GetUserInventory_Failure(t *testing.T) {
 	ctx := context.Background()
 	userID := int32(1)
 
