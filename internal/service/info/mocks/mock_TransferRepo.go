@@ -8,7 +8,7 @@ import (
 	"context"
 
 	mock "github.com/stretchr/testify/mock"
-	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 )
 
 // NewMockTransferRepo creates a new instance of MockTransferRepo. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -39,23 +39,23 @@ func (_m *MockTransferRepo) EXPECT() *MockTransferRepo_Expecter {
 }
 
 // GetReceivedTransfers provides a mock function for the type MockTransferRepo
-func (_mock *MockTransferRepo) GetReceivedTransfers(ctx context.Context, userId int32) ([]db.GetReceivedTransfersRow, error) {
+func (_mock *MockTransferRepo) GetReceivedTransfers(ctx context.Context, userId int32) ([]domain.ReceivedTransfer, error) {
 	ret := _mock.Called(ctx, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetReceivedTransfers")
 	}
 
-	var r0 []db.GetReceivedTransfersRow
+	var r0 []domain.ReceivedTransfer
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]db.GetReceivedTransfersRow, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]domain.ReceivedTransfer, error)); ok {
 		return returnFunc(ctx, userId)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []db.GetReceivedTransfersRow); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []domain.ReceivedTransfer); ok {
 		r0 = returnFunc(ctx, userId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.GetReceivedTransfersRow)
+			r0 = ret.Get(0).([]domain.ReceivedTransfer)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, int32) error); ok {
@@ -96,34 +96,34 @@ func (_c *MockTransferRepo_GetReceivedTransfers_Call) Run(run func(ctx context.C
 	return _c
 }
 
-func (_c *MockTransferRepo_GetReceivedTransfers_Call) Return(getReceivedTransfersRows []db.GetReceivedTransfersRow, err error) *MockTransferRepo_GetReceivedTransfers_Call {
-	_c.Call.Return(getReceivedTransfersRows, err)
+func (_c *MockTransferRepo_GetReceivedTransfers_Call) Return(receivedTransfers []domain.ReceivedTransfer, err error) *MockTransferRepo_GetReceivedTransfers_Call {
+	_c.Call.Return(receivedTransfers, err)
 	return _c
 }
 
-func (_c *MockTransferRepo_GetReceivedTransfers_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]db.GetReceivedTransfersRow, error)) *MockTransferRepo_GetReceivedTransfers_Call {
+func (_c *MockTransferRepo_GetReceivedTransfers_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]domain.ReceivedTransfer, error)) *MockTransferRepo_GetReceivedTransfers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSentTransfers provides a mock function for the type MockTransferRepo
-func (_mock *MockTransferRepo) GetSentTransfers(ctx context.Context, userId int32) ([]db.GetSentTransfersRow, error) {
+func (_mock *MockTransferRepo) GetSentTransfers(ctx context.Context, userId int32) ([]domain.SentTransfer, error) {
 	ret := _mock.Called(ctx, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSentTransfers")
 	}
 
-	var r0 []db.GetSentTransfersRow
+	var r0 []domain.SentTransfer
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]db.GetSentTransfersRow, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]domain.SentTransfer, error)); ok {
 		return returnFunc(ctx, userId)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []db.GetSentTransfersRow); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []domain.SentTransfer); ok {
 		r0 = returnFunc(ctx, userId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.GetSentTransfersRow)
+			r0 = ret.Get(0).([]domain.SentTransfer)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, int32) error); ok {
@@ -164,12 +164,12 @@ func (_c *MockTransferRepo_GetSentTransfers_Call) Run(run func(ctx context.Conte
 	return _c
 }
 
-func (_c *MockTransferRepo_GetSentTransfers_Call) Return(getSentTransfersRows []db.GetSentTransfersRow, err error) *MockTransferRepo_GetSentTransfers_Call {
-	_c.Call.Return(getSentTransfersRows, err)
+func (_c *MockTransferRepo_GetSentTransfers_Call) Return(sentTransfers []domain.SentTransfer, err error) *MockTransferRepo_GetSentTransfers_Call {
+	_c.Call.Return(sentTransfers, err)
 	return _c
 }
 
-func (_c *MockTransferRepo_GetSentTransfers_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]db.GetSentTransfersRow, error)) *MockTransferRepo_GetSentTransfers_Call {
+func (_c *MockTransferRepo_GetSentTransfers_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]domain.SentTransfer, error)) *MockTransferRepo_GetSentTransfers_Call {
 	_c.Call.Return(run)
 	return _c
 }

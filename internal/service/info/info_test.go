@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tynou/avito-assignment/internal/apperr"
-	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 	"github.com/tynou/avito-assignment/internal/service/info/mocks"
 )
 
@@ -21,16 +21,16 @@ func Test_GetUserInfo_Success(t *testing.T) {
 
 	mockUserRepo.On("GetUserBalance", ctx, userID).Return(int32(1000), nil)
 
-	mockPurchaseRepo.On("GetUserInventory", ctx, userID).Return([]db.GetUserInventoryRow{
+	mockPurchaseRepo.On("GetUserInventory", ctx, userID).Return([]domain.InventoryItem{
 		{Type: "t-shirt", Quantity: 2},
 		{Type: "book", Quantity: 1},
 	}, nil)
 
-	mockTransferRepo.On("GetReceivedTransfers", ctx, userID).Return([]db.GetReceivedTransfersRow{
+	mockTransferRepo.On("GetReceivedTransfers", ctx, userID).Return([]domain.ReceivedTransfer{
 		{FromUser: "user1", Amount: 100},
 	}, nil)
 
-	mockTransferRepo.On("GetSentTransfers", ctx, userID).Return([]db.GetSentTransfersRow{
+	mockTransferRepo.On("GetSentTransfers", ctx, userID).Return([]domain.SentTransfer{
 		{ToUser: "user2", Amount: 50},
 		{ToUser: "user3", Amount: 67},
 	}, nil)
@@ -76,7 +76,7 @@ func Test_GetUserInfo_GetUserInventory_Failure(t *testing.T) {
 
 	mockUserRepo.On("GetUserBalance", ctx, userID).Return(int32(1000), nil)
 
-	mockPurchaseRepo.On("GetUserInventory", ctx, userID).Return([]db.GetUserInventoryRow{}, errors.New("error"))
+	mockPurchaseRepo.On("GetUserInventory", ctx, userID).Return([]domain.InventoryItem{}, errors.New("error"))
 
 	service := NewInfoService(mockUserRepo, mockPurchaseRepo, mocks.NewMockTransferRepo(t))
 

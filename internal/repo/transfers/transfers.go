@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 )
 
 type TransferRepo struct {
@@ -84,18 +85,36 @@ func (r *TransferRepo) CreateTransfer(ctx context.Context, fromUserId, toUserId 
 	return tx.Commit(ctx)
 }
 
-func (r *TransferRepo) GetReceivedTransfers(ctx context.Context, userId int32) ([]db.GetReceivedTransfersRow, error) {
-	transfers, err := r.queries.GetReceivedTransfers(ctx, userId)
+func (r *TransferRepo) GetReceivedTransfers(ctx context.Context, userId int32) ([]domain.ReceivedTransfer, error) {
+	dbTransfers, err := r.queries.GetReceivedTransfers(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
+
+	transfers := make([]domain.ReceivedTransfer, len(dbTransfers))
+	for i, item := range dbTransfers {
+		transfers[i] = domain.ReceivedTransfer{
+			FromUser: item.FromUser,
+			Amount:   item.Amount,
+		}
+	}
+
 	return transfers, nil
 }
 
-func (r *TransferRepo) GetSentTransfers(ctx context.Context, userId int32) ([]db.GetSentTransfersRow, error) {
-	transfers, err := r.queries.GetSentTransfers(ctx, userId)
+func (r *TransferRepo) GetSentTransfers(ctx context.Context, userId int32) ([]domain.SentTransfer, error) {
+	dbTransfers, err := r.queries.GetSentTransfers(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
+
+	transfers := make([]domain.SentTransfer, len(dbTransfers))
+	for i, item := range dbTransfers {
+		transfers[i] = domain.SentTransfer{
+			ToUser: item.ToUser,
+			Amount: item.Amount,
+		}
+	}
+
 	return transfers, nil
 }

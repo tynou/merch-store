@@ -3,33 +3,14 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/tynou/avito-assignment/internal/domain"
 	"github.com/tynou/avito-assignment/internal/http/common"
 )
 
-type InventoryItem struct {
-	Type     string `json:"type"`
-	Quantity int32  `json:"quantity"`
-}
-
-type ReceivedTransfer struct {
-	FromUser string `json:"fromUser"`
-	Amount   int32  `json:"amount"`
-}
-
-type SentTransfer struct {
-	ToUser string `json:"toUser"`
-	Amount int32  `json:"amount"`
-}
-
-type CoinHistory struct {
-	Received []ReceivedTransfer `json:"received"`
-	Sent     []SentTransfer     `json:"sent"`
-}
-
 type InfoResponse struct {
-	Coins       int32           `json:"coins"`
-	Inventory   []InventoryItem `json:"inventory"`
-	CoinHistory CoinHistory     `json:"coinHistory"`
+	Coins       int32                  `json:"coins"`
+	Inventory   []domain.InventoryItem `json:"inventory"`
+	CoinHistory domain.CoinHistory     `json:"coinHistory"`
 }
 
 func (h *ApiHandler) Info(w http.ResponseWriter, r *http.Request) {

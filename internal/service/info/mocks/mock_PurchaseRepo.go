@@ -8,7 +8,7 @@ import (
 	"context"
 
 	mock "github.com/stretchr/testify/mock"
-	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 )
 
 // NewMockPurchaseRepo creates a new instance of MockPurchaseRepo. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -39,23 +39,23 @@ func (_m *MockPurchaseRepo) EXPECT() *MockPurchaseRepo_Expecter {
 }
 
 // GetUserInventory provides a mock function for the type MockPurchaseRepo
-func (_mock *MockPurchaseRepo) GetUserInventory(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error) {
+func (_mock *MockPurchaseRepo) GetUserInventory(ctx context.Context, userId int32) ([]domain.InventoryItem, error) {
 	ret := _mock.Called(ctx, userId)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserInventory")
 	}
 
-	var r0 []db.GetUserInventoryRow
+	var r0 []domain.InventoryItem
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]db.GetUserInventoryRow, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) ([]domain.InventoryItem, error)); ok {
 		return returnFunc(ctx, userId)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []db.GetUserInventoryRow); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int32) []domain.InventoryItem); ok {
 		r0 = returnFunc(ctx, userId)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]db.GetUserInventoryRow)
+			r0 = ret.Get(0).([]domain.InventoryItem)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, int32) error); ok {
@@ -96,12 +96,12 @@ func (_c *MockPurchaseRepo_GetUserInventory_Call) Run(run func(ctx context.Conte
 	return _c
 }
 
-func (_c *MockPurchaseRepo_GetUserInventory_Call) Return(getUserInventoryRows []db.GetUserInventoryRow, err error) *MockPurchaseRepo_GetUserInventory_Call {
-	_c.Call.Return(getUserInventoryRows, err)
+func (_c *MockPurchaseRepo_GetUserInventory_Call) Return(inventoryItems []domain.InventoryItem, err error) *MockPurchaseRepo_GetUserInventory_Call {
+	_c.Call.Return(inventoryItems, err)
 	return _c
 }
 
-func (_c *MockPurchaseRepo_GetUserInventory_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error)) *MockPurchaseRepo_GetUserInventory_Call {
+func (_c *MockPurchaseRepo_GetUserInventory_Call) RunAndReturn(run func(ctx context.Context, userId int32) ([]domain.InventoryItem, error)) *MockPurchaseRepo_GetUserInventory_Call {
 	_c.Call.Return(run)
 	return _c
 }

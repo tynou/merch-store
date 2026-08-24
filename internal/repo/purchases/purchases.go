@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tynou/avito-assignment/internal/apperr"
 	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 )
 
 type PurchaseRepo struct {
@@ -58,10 +59,19 @@ func (r *PurchaseRepo) CreatePurchase(ctx context.Context, userId int32, merch d
 	return tx.Commit(ctx)
 }
 
-func (r *PurchaseRepo) GetUserInventory(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error) {
-	inventory, err := r.queries.GetUserInventory(ctx, userId)
+func (r *PurchaseRepo) GetUserInventory(ctx context.Context, userId int32) ([]domain.InventoryItem, error) {
+	dbInventory, err := r.queries.GetUserInventory(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
+
+	inventory := make([]domain.InventoryItem, len(dbInventory))
+	for i, item := range dbInventory {
+		inventory[i] = domain.InventoryItem{
+			Type:     item.Type,
+			Quantity: item.Quantity,
+		}
+	}
+
 	return inventory, nil
 }

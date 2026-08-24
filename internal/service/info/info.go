@@ -3,7 +3,7 @@ package info
 import (
 	"context"
 
-	"github.com/tynou/avito-assignment/internal/db"
+	"github.com/tynou/avito-assignment/internal/domain"
 	"github.com/tynou/avito-assignment/internal/http/handlers"
 )
 
@@ -12,12 +12,12 @@ type UserRepo interface {
 }
 
 type PurchaseRepo interface {
-	GetUserInventory(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error)
+	GetUserInventory(ctx context.Context, userId int32) ([]domain.InventoryItem, error)
 }
 
 type TransferRepo interface {
-	GetReceivedTransfers(ctx context.Context, userId int32) ([]db.GetReceivedTransfersRow, error)
-	GetSentTransfers(ctx context.Context, userId int32) ([]db.GetSentTransfersRow, error)
+	GetReceivedTransfers(ctx context.Context, userId int32) ([]domain.ReceivedTransfer, error)
+	GetSentTransfers(ctx context.Context, userId int32) ([]domain.SentTransfer, error)
 }
 
 type InfoService struct {
@@ -40,49 +40,25 @@ func (s *InfoService) GetInfo(ctx context.Context, userId int32) (*handlers.Info
 		return nil, err
 	}
 
-	dbInventory, err := s.purchaseRepo.GetUserInventory(ctx, userId)
+	inventory, err := s.purchaseRepo.GetUserInventory(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
 
-	inventory := make([]handlers.InventoryItem, len(dbInventory))
-	for i, item := range dbInventory {
-		inventory[i] = handlers.InventoryItem{
-			Type:     item.Type,
-			Quantity: item.Quantity,
-		}
-	}
-
-	dbReceived, err := s.transferRepo.GetReceivedTransfers(ctx, userId)
+	received, err := s.transferRepo.GetReceivedTransfers(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
 
-	received := make([]handlers.ReceivedTransfer, len(dbReceived))
-	for i, item := range dbReceived {
-		received[i] = handlers.ReceivedTransfer{
-			FromUser: item.FromUser,
-			Amount:   item.Amount,
-		}
-	}
-
-	dbSent, err := s.transferRepo.GetSentTransfers(ctx, userId)
+	sent, err := s.transferRepo.GetSentTransfers(ctx, userId)
 	if err != nil {
 		return nil, err
-	}
-
-	sent := make([]handlers.SentTransfer, len(dbSent))
-	for i, item := range dbSent {
-		sent[i] = handlers.SentTransfer{
-			ToUser: item.ToUser,
-			Amount: item.Amount,
-		}
 	}
 
 	response := &handlers.InfoResponse{
 		Coins:     balance,
 		Inventory: inventory,
-		CoinHistory: handlers.CoinHistory{
+		CoinHistory: domain.CoinHistory{
 			Received: received,
 			Sent:     sent,
 		},
