@@ -11,7 +11,7 @@ import (
 
 type SendCoinRequest struct {
 	ToUser string `json:"toUser" validate:"required"`
-	Amount int32  `json:"amount" validate:"required"`
+	Amount int32  `json:"amount" validate:"required,gt=0"`
 }
 
 func (h *ApiHandler) SendCoin(w http.ResponseWriter, r *http.Request) {
