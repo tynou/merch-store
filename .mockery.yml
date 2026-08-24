@@ -22,8 +22,7 @@ require-template-schema-exists: true
 template: testify
 template-schema: '{{.Template}}.schema.json'
 packages:
-  github.com/tynou/avito-assignment/internal/db:
+  github.com/tynou/avito-assignment/internal/service/...:
     config:
       all: true
-    interfaces:
-      Querier:
+      recursive: true
