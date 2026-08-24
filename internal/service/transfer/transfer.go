@@ -7,20 +7,20 @@ import (
 	"github.com/tynou/avito-assignment/internal/db"
 )
 
-type IUserRepo interface {
+type UserRepo interface {
 	GetUserByUsername(ctx context.Context, username string) (db.User, error)
 }
 
-type ITransferRepo interface {
+type TransferRepo interface {
 	CreateTransfer(ctx context.Context, fromUserId, toUserId int32, amount int32) error
 }
 
 type TransferService struct {
-	userRepo     IUserRepo
-	transferRepo ITransferRepo
+	userRepo     UserRepo
+	transferRepo TransferRepo
 }
 
-func NewTransferService(userRepo IUserRepo, transferRepo ITransferRepo) *TransferService {
+func NewTransferService(userRepo UserRepo, transferRepo TransferRepo) *TransferService {
 	return &TransferService{
 		userRepo:     userRepo,
 		transferRepo: transferRepo,

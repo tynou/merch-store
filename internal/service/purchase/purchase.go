@@ -6,20 +6,20 @@ import (
 	"github.com/tynou/avito-assignment/internal/db"
 )
 
-type IMerchRepo interface {
+type MerchRepo interface {
 	GetMerchByName(ctx context.Context, name string) (db.Merch, error)
 }
 
-type IPurchaseRepo interface {
+type PurchaseRepo interface {
 	CreatePurchase(ctx context.Context, userId int32, merch db.Merch) error
 }
 
 type PurchaseService struct {
-	merchRepo    IMerchRepo
-	purchaseRepo IPurchaseRepo
+	merchRepo    MerchRepo
+	purchaseRepo PurchaseRepo
 }
 
-func NewPurchaseService(merchRepo IMerchRepo, purchaseRepo IPurchaseRepo) *PurchaseService {
+func NewPurchaseService(merchRepo MerchRepo, purchaseRepo PurchaseRepo) *PurchaseService {
 	return &PurchaseService{
 		merchRepo:    merchRepo,
 		purchaseRepo: purchaseRepo,

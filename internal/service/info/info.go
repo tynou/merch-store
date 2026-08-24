@@ -7,26 +7,26 @@ import (
 	"github.com/tynou/avito-assignment/internal/http/handlers"
 )
 
-type IUserRepo interface {
+type UserRepo interface {
 	GetUserBalance(ctx context.Context, userId int32) (int32, error)
 }
 
-type IPurchaseRepo interface {
+type PurchaseRepo interface {
 	GetUserInventory(ctx context.Context, userId int32) ([]db.GetUserInventoryRow, error)
 }
 
-type ITransferRepo interface {
+type TransferRepo interface {
 	GetReceivedTransfers(ctx context.Context, userId int32) ([]db.GetReceivedTransfersRow, error)
 	GetSentTransfers(ctx context.Context, userId int32) ([]db.GetSentTransfersRow, error)
 }
 
 type InfoService struct {
-	userRepo     IUserRepo
-	purchaseRepo IPurchaseRepo
-	transferRepo ITransferRepo
+	userRepo     UserRepo
+	purchaseRepo PurchaseRepo
+	transferRepo TransferRepo
 }
 
-func NewInfoService(userRepo IUserRepo, purchaseRepo IPurchaseRepo, transferRepo ITransferRepo) *InfoService {
+func NewInfoService(userRepo UserRepo, purchaseRepo PurchaseRepo, transferRepo TransferRepo) *InfoService {
 	return &InfoService{
 		userRepo:     userRepo,
 		purchaseRepo: purchaseRepo,

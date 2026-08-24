@@ -6,36 +6,36 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type IAuthService interface {
+type AuthService interface {
 	Authenticate(ctx context.Context, username, password string) (string, error)
 }
 
-type IPurchaseService interface {
+type PurchaseService interface {
 	Buy(ctx context.Context, userId int32, item string) error
 }
 
-type IInfoService interface {
+type InfoService interface {
 	GetInfo(ctx context.Context, userId int32) (*InfoResponse, error)
 }
 
-type ITransferService interface {
+type TransferService interface {
 	SendCoin(ctx context.Context, fromUserId int32, toUserName string, amount int32) error
 }
 
 type ApiHandler struct {
 	validate *validator.Validate
-	auth     IAuthService
-	purchase IPurchaseService
-	info     IInfoService
-	transfer ITransferService
+	auth     AuthService
+	purchase PurchaseService
+	info     InfoService
+	transfer TransferService
 }
 
 func NewApiHandler(
 	validate *validator.Validate,
-	auth IAuthService,
-	purchase IPurchaseService,
-	info IInfoService,
-	transfer ITransferService,
+	auth AuthService,
+	purchase PurchaseService,
+	info InfoService,
+	transfer TransferService,
 ) *ApiHandler {
 	return &ApiHandler{
 		validate: validate,

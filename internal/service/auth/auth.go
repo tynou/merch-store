@@ -12,17 +12,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type IUserRepo interface {
+type UserRepo interface {
 	GetUserByUsername(ctx context.Context, username string) (db.User, error)
 	CreateUser(ctx context.Context, username, passwordHash string) (int32, error)
 }
 
 type AuthService struct {
 	cfg      *config.Config
-	userRepo IUserRepo
+	userRepo UserRepo
 }
 
-func NewAuthService(cfg *config.Config, userRepo IUserRepo) *AuthService {
+func NewAuthService(cfg *config.Config, userRepo UserRepo) *AuthService {
 	return &AuthService{
 		cfg:      cfg,
 		userRepo: userRepo,
